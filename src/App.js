@@ -22,8 +22,19 @@ function App() {
     const boardState = initializeBoard();
     setBoard(boardState);
   }, []);
-  const callBack = (...arg) => {
-    console.log(arg);
+
+  function isValidMove(row, col) {
+    return board[row][col].mark === '_';
+  }
+
+  const callBack = (row, col) => {
+    // debugger;
+    if (isValidMove(row, col)) {
+      const copy = [...board];
+      copy[row][col].mark = whichPlayerTurn();
+      setBoard(copy);
+      setPlayerTurn(playerTurn + 1);
+    }
   };
 
   function whichPlayerTurn() {
