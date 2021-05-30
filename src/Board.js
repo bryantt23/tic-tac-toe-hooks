@@ -1,9 +1,9 @@
-import React from 'react';
-
-const n = 3;
-const boardState = [];
+import React, { useState, useEffect } from 'react';
+import Square from './Square';
 
 function initializeBoard() {
+  const n = 3;
+  const boardState = [];
   for (let i = 0; i < n; i++) {
     let row = [];
     for (let j = 0; j < n; j++) {
@@ -11,22 +11,41 @@ function initializeBoard() {
     }
     boardState.push(row);
   }
+  return boardState;
 }
 
 function Board() {
-  initializeBoard();
+  const [board, setBoard] = useState(null);
+  useEffect(() => {
+    const boardState = initializeBoard();
+    setBoard(boardState);
+  }, []);
+
+  const callBack = (r, c) => {
+    console.log(r, c);
+  };
+
   return (
     <div>
+      <p>{JSON.stringify(board)}</p>
       Board
-      {boardState.map(row => {
-        return (
-          <p>
-            {row.map(square => {
-              return <span>{JSON.stringify(square)}</span>;
-            })}
-          </p>
-        );
-      })}
+      {board &&
+        board.map((row, i) => {
+          return (
+            <p key={i}>
+              {row.map(square => {
+                return (
+                  <Square
+                    key={`${square.row}-${square.col}`}
+                    callBack={callBack}
+                    row={square.row}
+                    col={square.col}
+                  />
+                );
+              })}
+            </p>
+          );
+        })}
     </div>
   );
 }
