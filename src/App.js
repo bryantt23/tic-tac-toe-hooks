@@ -7,7 +7,7 @@ function initializeBoard() {
   for (let i = 0; i < n; i++) {
     let row = [];
     for (let j = 0; j < n; j++) {
-      row.push({ row: i, col: j, move: null });
+      row.push({ row: i, col: j, mark: '_' });
     }
     boardState.push(row);
   }
@@ -33,7 +33,7 @@ function App() {
   return (
     <div>
       {`It is ${whichPlayerTurn()}'s turn`}
-      <Board board={board} />
+      <Board board={board} callBack={callBack} />
     </div>
   );
 }

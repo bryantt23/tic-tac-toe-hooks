@@ -16,6 +16,7 @@ function Board({ board, callBack }) {
                     callBack={callBack}
                     row={square.row}
                     col={square.col}
+                    mark={square.mark}
                   />
                 );
               })}
