@@ -12,12 +12,6 @@ function Square({ callBack, row, col, mark }) {
         backgroundColor: 'aqua'
       }}
       onClick={() => {
-        console.log(
-          '🚀 ~ file: Square.js ~ line 4 ~ Square ~ row, col',
-          row,
-          col
-        );
-
         callBack(row, col);
       }}
     >

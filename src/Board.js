@@ -3,7 +3,6 @@ import Square from './Square';
 function Board({ board, callBack }) {
   return (
     <div>
-      {/* <p>{JSON.stringify(board)}</p> */}
       Board
       {board &&
         board.map((row, i) => {

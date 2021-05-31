@@ -24,7 +24,6 @@ function App() {
       !gameManager.hasWinner(board)
     ) {
       let boardHistoryCopy = JSON.parse(JSON.stringify(boardHistory));
-
       const boardCopy = [...board];
       boardCopy[row][col].mark = gameManager.whichPlayerTurn();
 
@@ -37,11 +36,6 @@ function App() {
       gameManager.nextPlayerTurn(boardCopy, setMessage);
       setBoard(boardCopy);
       setBoardHistory(boardHistoryCopy);
-
-      console.log(
-        '🚀 ~ file: App.js ~ line 71 ~ callBack ~ boardHistoryCopy',
-        boardHistoryCopy
-      );
     }
   };
 
@@ -52,7 +46,7 @@ function App() {
       <Board board={board} callBack={callBack} />
       <div>
         {boardHistory &&
-          boardHistory.map((board, i) => {
+          boardHistory.map((elem, i) => {
             return (
               <p key={i} onClick={() => changeBoardState(i)}>
                 {i}
