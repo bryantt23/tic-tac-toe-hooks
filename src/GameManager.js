@@ -108,12 +108,17 @@ export default function GameManager() {
     playerTurn = turn;
   }
 
+  function isValidMove(row, col, board) {
+    return board[row][col].mark === '_';
+  }
+
   return {
     initializeBoard,
     hasWinner,
     nextPlayerTurn,
     whichPlayerTurn,
     getPlayerTurn,
-    setPlayerTurn
+    setPlayerTurn,
+    isValidMove
   };
 }

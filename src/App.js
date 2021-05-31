@@ -5,8 +5,10 @@ import GameManager from './GameManager';
 const gameManager = new GameManager();
 
 function App() {
-  const [board, setBoard] = useState(null);
-  const [message, setMessage] = useState('');
+  const [board, setBoard] = useState(gameManager.initializeBoard());
+  const [message, setMessage] = useState(
+    `It is ${gameManager.whichPlayerTurn()}'s turn`
+  );
   const [boardHistory, setBoardHistory] = useState([]);
 
   function changeBoardState(index) {
@@ -16,19 +18,11 @@ function App() {
     gameManager.nextPlayerTurn(boardAtIndex, setMessage);
   }
 
-  useEffect(() => {
-    const boardState = gameManager.initializeBoard();
-    setBoard(boardState);
-    setMessage(`It is ${gameManager.whichPlayerTurn()}'s turn`);
-    setBoardHistory([]);
-  }, []);
-
-  function isValidMove(row, col) {
-    return board[row][col].mark === '_';
-  }
-
   const callBack = (row, col) => {
-    if (isValidMove(row, col) && !gameManager.hasWinner(board)) {
+    if (
+      gameManager.isValidMove(row, col, board) &&
+      !gameManager.hasWinner(board)
+    ) {
       let boardHistoryCopy = JSON.parse(JSON.stringify(boardHistory));
 
       const boardCopy = [...board];
