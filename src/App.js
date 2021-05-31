@@ -30,24 +30,22 @@ function App() {
       '🚀 ~ file: App.js ~ line 29 ~ changeBoardState ~ index',
       index
     );
-    /*
-    get index
-    set board to that index
-    splice everything in history after the index - actually don't do this
-    but if they click on something new need to remove future moves so maybe push is wrong thing to do
-    let's get board history
-    then set board to that point in history
-    then deal with future moves after
-    */
-    const boardAtIndex = boardHistory[index];
     console.log(
-      '🚀 ~ file: App.js ~ line 45 ~ changeBoardState ~ boardAtIndex',
-      JSON.stringify(boardAtIndex)
+      '🚀 ~ file: App.js ~ line 37 ~ changeBoardState ~ playerTurn',
+      playerTurn
     );
+
+    // if (gameHasWinner && index === playerTurn) {
+    //   return;
+    // }
+
+    const boardAtIndex = JSON.parse(JSON.stringify(boardHistory[index]));
     setBoard(boardAtIndex);
+    // setGameHasWinner(false);
+    nextPlayerTurn(boardAtIndex);
     playerTurn = index + 1;
-    const messageLocal = `It is ${whichPlayerTurn()}'s turn`;
-    setMessage(messageLocal);
+    // const messageLocal = `It is ${whichPlayerTurn()}'s turn`;
+    // setMessage(messageLocal);
   }
 
   useEffect(() => {
@@ -63,7 +61,7 @@ function App() {
 
   const callBack = (row, col) => {
     // debugger;
-    if (isValidMove(row, col) && !gameHasWinner) {
+    if (isValidMove(row, col) && !hasWinner(board)) {
       let boardHistoryCopy = JSON.parse(JSON.stringify(boardHistory));
 
       const boardCopy = [...board];
@@ -72,9 +70,10 @@ function App() {
       if (boardHistoryCopy.length === 0) {
         boardHistoryCopy[0] = [...boardCopy];
       } else {
+        boardHistoryCopy.splice(playerTurn);
         boardHistoryCopy = [...boardHistoryCopy, boardCopy];
       }
-      nextPlayerTurn();
+      nextPlayerTurn(boardCopy);
       setBoard(boardCopy);
       setBoardHistory(boardHistoryCopy);
 
@@ -86,9 +85,9 @@ function App() {
     }
   };
 
-  function nextPlayerTurn() {
+  function nextPlayerTurn(board) {
     let messageLocal;
-    if (hasWinner()) {
+    if (hasWinner(board)) {
       messageLocal = whichPlayerTurn() + ' has won!';
       // view.disableBoard();//TODO
       // let element = document.getElementById('board');
@@ -108,15 +107,16 @@ function App() {
     setMessage(messageLocal);
   }
 
-  function hasWinner() {
-    const winner = horizontalWinner() || verticalWinner() || diagonalWinner();
+  function hasWinner(board) {
+    const winner =
+      horizontalWinner(board) || verticalWinner(board) || diagonalWinner(board);
     if (winner) {
       setGameHasWinner(true);
     }
     return winner;
   }
 
-  function horizontalWinner() {
+  function horizontalWinner(board) {
     for (let i = 0; i < size; i++) {
       let ct = 0;
       for (let j = 0; j < size; j++) {
@@ -133,7 +133,7 @@ function App() {
     return false;
   }
 
-  function verticalWinner() {
+  function verticalWinner(board) {
     for (let j = 0; j < size; j++) {
       let ct = 0;
       for (let i = 0; i < size; i++) {
@@ -150,7 +150,7 @@ function App() {
     return false;
   }
 
-  function diagonalWinner() {
+  function diagonalWinner(board) {
     let ct = 0;
     for (let i = 0; i < size; i++) {
       if (board[i][i].mark === 'X') {
@@ -187,7 +187,7 @@ function App() {
           boardHistory.map((board, i) => {
             return (
               <p key={i} onClick={() => changeBoardState(i)}>
-                {i} {JSON.stringify(board)}
+                {i}
               </p>
             );
           })}
