@@ -45,6 +45,9 @@ function App() {
       JSON.stringify(boardAtIndex)
     );
     setBoard(boardAtIndex);
+    playerTurn = index + 1;
+    const messageLocal = `It is ${whichPlayerTurn()}'s turn`;
+    setMessage(messageLocal);
   }
 
   useEffect(() => {
@@ -175,8 +178,9 @@ function App() {
 
   return (
     <div>
+      <p>{playerTurn}</p>
       {message}
-      {JSON.stringify(boardHistory)}
+      {/* {JSON.stringify(boardHistory)} */}
       <Board board={board} callBack={callBack} />
       <div>
         {boardHistory &&
