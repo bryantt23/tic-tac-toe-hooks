@@ -1,11 +1,6 @@
 import Board from './Board';
 import React, { useState, useEffect } from 'react';
 
-function disableBoard() {
-  const gameBoardElement = document.querySelector('#game-board');
-  gameBoardElement.classList.add('disabled-div');
-}
-
 const size = 3;
 function initializeBoard() {
   const boardState = [];
@@ -24,16 +19,39 @@ function App() {
   const [gameHasWinner, setGameHasWinner] = useState(false);
   const [board, setBoard] = useState(null);
   const [message, setMessage] = useState('');
-  const [disabledState, setDisabledState] = useState(false);
+  const [boardHistory, setBoardHistory] = useState([]);
 
   function whichPlayerTurn() {
     return playerTurn % 2 == 0 ? 'X' : 'O';
+  }
+
+  function changeBoardState(index) {
+    console.log(
+      '🚀 ~ file: App.js ~ line 29 ~ changeBoardState ~ index',
+      index
+    );
+    /*
+    get index
+    set board to that index
+    splice everything in history after the index - actually don't do this
+    but if they click on something new need to remove future moves so maybe push is wrong thing to do
+    let's get board history
+    then set board to that point in history
+    then deal with future moves after
+    */
+    const boardAtIndex = boardHistory[index];
+    console.log(
+      '🚀 ~ file: App.js ~ line 45 ~ changeBoardState ~ boardAtIndex',
+      JSON.stringify(boardAtIndex)
+    );
+    setBoard(boardAtIndex);
   }
 
   useEffect(() => {
     const boardState = initializeBoard();
     setBoard(boardState);
     setMessage(`It is ${whichPlayerTurn()}'s turn`);
+    setBoardHistory([]);
   }, []);
 
   function isValidMove(row, col) {
@@ -42,11 +60,26 @@ function App() {
 
   const callBack = (row, col) => {
     // debugger;
-    if (isValidMove(row, col)) {
-      const copy = [...board];
-      copy[row][col].mark = whichPlayerTurn();
-      setBoard(copy);
+    if (isValidMove(row, col) && !gameHasWinner) {
+      let boardHistoryCopy = JSON.parse(JSON.stringify(boardHistory));
+
+      const boardCopy = [...board];
+      boardCopy[row][col].mark = whichPlayerTurn();
+
+      if (boardHistoryCopy.length === 0) {
+        boardHistoryCopy[0] = [...boardCopy];
+      } else {
+        boardHistoryCopy = [...boardHistoryCopy, boardCopy];
+      }
       nextPlayerTurn();
+      setBoard(boardCopy);
+      setBoardHistory(boardHistoryCopy);
+
+      console.log(
+        '🚀 ~ file: App.js ~ line 71 ~ callBack ~ boardHistoryCopy',
+        boardHistoryCopy
+      );
+      // boardHistoryCopy = [...boardHistoryCopy, boardCopy];
     }
   };
 
@@ -55,7 +88,6 @@ function App() {
     if (hasWinner()) {
       messageLocal = whichPlayerTurn() + ' has won!';
       // view.disableBoard();//TODO
-      setDisabledState(true);
       // let element = document.getElementById('board');
       // element.style = {
       //   pointerEvents: 'none',
@@ -65,7 +97,6 @@ function App() {
       playerTurn++;
       if (playerTurn === 9) {
         messageLocal = "It's a draw!";
-        setDisabledState(true);
         // view.disableBoard();//TODO
       } else {
         messageLocal = `It is ${whichPlayerTurn()}'s turn`;
@@ -75,7 +106,11 @@ function App() {
   }
 
   function hasWinner() {
-    return horizontalWinner() || verticalWinner() || diagonalWinner();
+    const winner = horizontalWinner() || verticalWinner() || diagonalWinner();
+    if (winner) {
+      setGameHasWinner(true);
+    }
+    return winner;
   }
 
   function horizontalWinner() {
@@ -139,14 +174,20 @@ function App() {
   }
 
   return (
-    <div
-      style={{
-        pointerEvents: disabledState ? 'none' : 'auto',
-        opacity: disabledState ? '0.4' : '1'
-      }}
-    >
+    <div>
       {message}
+      {JSON.stringify(boardHistory)}
       <Board board={board} callBack={callBack} />
+      <div>
+        {boardHistory &&
+          boardHistory.map((board, i) => {
+            return (
+              <p key={i} onClick={() => changeBoardState(i)}>
+                {i} {JSON.stringify(board)}
+              </p>
+            );
+          })}
+      </div>
     </div>
   );
 }
