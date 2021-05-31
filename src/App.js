@@ -5,7 +5,6 @@ import GameManager from './GameManager';
 const gameManager = new GameManager();
 
 function App() {
-  const [gameHasWinner, setGameHasWinner] = useState(false);
   const [board, setBoard] = useState(null);
   const [message, setMessage] = useState('');
   const [boardHistory, setBoardHistory] = useState([]);
@@ -14,7 +13,7 @@ function App() {
     const boardAtIndex = JSON.parse(JSON.stringify(boardHistory[index]));
     setBoard(boardAtIndex);
     gameManager.setPlayerTurn(index);
-    gameManager.nextPlayerTurn(boardAtIndex, setGameHasWinner, setMessage);
+    gameManager.nextPlayerTurn(boardAtIndex, setMessage);
   }
 
   useEffect(() => {
@@ -29,10 +28,7 @@ function App() {
   }
 
   const callBack = (row, col) => {
-    if (
-      isValidMove(row, col) &&
-      !gameManager.hasWinner(board, setGameHasWinner)
-    ) {
+    if (isValidMove(row, col) && !gameManager.hasWinner(board)) {
       let boardHistoryCopy = JSON.parse(JSON.stringify(boardHistory));
 
       const boardCopy = [...board];
@@ -44,7 +40,7 @@ function App() {
         boardHistoryCopy.splice(gameManager.getPlayerTurn());
         boardHistoryCopy = [...boardHistoryCopy, boardCopy];
       }
-      gameManager.nextPlayerTurn(boardCopy, setGameHasWinner, setMessage);
+      gameManager.nextPlayerTurn(boardCopy, setMessage);
       setBoard(boardCopy);
       setBoardHistory(boardHistoryCopy);
 

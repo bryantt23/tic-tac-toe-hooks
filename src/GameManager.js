@@ -14,12 +14,10 @@ export default function GameManager() {
     return boardState;
   }
 
-  function hasWinner(board, setGameHasWinner) {
+  function hasWinner(board) {
     const winner =
       horizontalWinner(board) || verticalWinner(board) || diagonalWinner(board);
-    if (winner) {
-      setGameHasWinner(true);
-    }
+
     return winner;
   }
 
@@ -83,9 +81,9 @@ export default function GameManager() {
     }
   }
 
-  function nextPlayerTurn(board, setGameHasWinner, setMessage) {
+  function nextPlayerTurn(board, setMessage) {
     let messageLocal;
-    if (hasWinner(board, setGameHasWinner)) {
+    if (hasWinner(board)) {
       messageLocal = whichPlayerTurn() + ' has won!';
     } else {
       playerTurn++;
